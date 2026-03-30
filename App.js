@@ -11,18 +11,23 @@ import Films from './screens/Films';
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 
-const Navigator = Platform.OS === 'ios' ? Tab.Navigator : Drawer.Navigator;
-const Screen = Platform.OS === 'ios' ? Tab.Screen : Drawer.Screen;
-
 export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NavigationContainer>
-        <Navigator>
-          <Screen name="Planets" component={Planets} />
-          <Screen name="Spaceships" component={Spaceships} />
-          <Screen name="Films" component={Films} />
-        </Navigator>
+        {Platform.OS === 'ios' ? (
+          <Tab.Navigator>
+            <Tab.Screen name="Planets" component={Planets} />
+            <Tab.Screen name="Spaceships" component={Spaceships} />
+            <Tab.Screen name="Films" component={Films} />
+          </Tab.Navigator>
+        ) : (
+          <Drawer.Navigator useLegacyImplementation={false}>
+            <Drawer.Screen name="Planets" component={Planets} />
+            <Drawer.Screen name="Spaceships" component={Spaceships} />
+            <Drawer.Screen name="Films" component={Films} />
+          </Drawer.Navigator>
+        )}
       </NavigationContainer>
     </GestureHandlerRootView>
   );
