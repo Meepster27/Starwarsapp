@@ -54,29 +54,31 @@ const Planets = () => {
   );
 
   return (
-    <View style={styles.container}>
-      <View style={styles.searchRow}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Type to search..."
-          placeholderTextColor="#888"
-          value={searchText}
-          onChangeText={setSearchText}
+    <>
+      <View style={styles.container}>
+        <View style={styles.searchRow}>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Type to search..."
+            placeholderTextColor="#888"
+            value={searchText}
+            onChangeText={setSearchText}
+          />
+          <Button title="Show" color="#ffd700" onPress={() => setModalVisible(true)} />
+        </View>
+        <FlatList
+          data={planets}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={renderPlanetItem}
+          contentContainerStyle={styles.listContent}
         />
-        <Button title="Show" color="#ffd700" onPress={() => setModalVisible(true)} />
       </View>
-      <FlatList
-        data={planets}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={renderPlanetItem}
-        contentContainerStyle={styles.listContent}
-      />
       <SearchModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         searchText={searchText}
       />
-    </View>
+    </>
   );
 };
 
