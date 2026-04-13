@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, FlatList, ActivityIndicator, TextInput, Button } from 'react-native';
+import SearchModal from '../components/SearchModal';
 
 const Films = () => {
   const [films, setFilms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchText, setSearchText] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     fetchFilms();
@@ -52,14 +55,31 @@ const Films = () => {
   );
 
   return (
-    <View style={styles.container}>
-      <FlatList
-        data={films}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={renderFilmItem}
-        contentContainerStyle={styles.listContent}
+    <>
+      <View style={styles.container}>
+        <View style={styles.searchRow}>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Type to search..."
+            placeholderTextColor="#888"
+            value={searchText}
+            onChangeText={setSearchText}
+          />
+          <Button title="Search" color="#ffd700" onPress={() => setModalVisible(true)} />
+        </View>
+        <FlatList
+          data={films}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={renderFilmItem}
+          contentContainerStyle={styles.listContent}
+        />
+      </View>
+      <SearchModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        searchText={searchText}
       />
-    </View>
+    </>
   );
 };
 
@@ -94,6 +114,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#ff6b6b',
     textAlign: 'center',
+  },
+  searchRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    backgroundColor: '#222',
+  },
+  searchInput: {
+    flex: 1,
+    height: 40,
+    backgroundColor: '#333',
+    color: '#fff',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    marginRight: 10,
+    fontSize: 16,
   },
 });
 
