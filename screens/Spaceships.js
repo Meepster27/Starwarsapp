@@ -63,6 +63,7 @@ const Spaceships = () => {
             placeholderTextColor="#888"
             value={searchText}
             onChangeText={setSearchText}
+            onSubmitEditing={() => setModalVisible(true)}
           />
           <Button title="Search" color="#ffd700" onPress={() => setModalVisible(true)} />
         </View>
