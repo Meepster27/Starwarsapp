@@ -67,20 +67,6 @@ const styles = StyleSheet.create({
     color: '#ccc',
     marginVertical: 2,
   },
-  deleteAction: {
-    backgroundColor: '#ff6b6b',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: 100,
-    marginVertical: 8,
-    marginHorizontal: 10,
-    borderRadius: 8,
-  },
-  deleteText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
   overlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.5)',
