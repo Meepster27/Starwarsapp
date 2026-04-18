@@ -54,7 +54,7 @@ const Spaceships = () => {
       <View style={styles.container}>
         <ScrollView style={styles.listContainer}>
           <Image 
-            source={{ uri: 'https://www.pngitem.com/pimgs/m/519-5190906_millennium-falcon-png-transparent-png.png' }}
+            source={{ uri: 'https://static.wikia.nocookie.net/starwars/images/a/ad/Death_Star_I_-_DICE_EA.jpg' }}
             style={styles.headerImage}
           />
           <View style={styles.searchRow}>
