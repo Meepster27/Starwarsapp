@@ -54,7 +54,7 @@ const Spaceships = () => {
       <View style={styles.container}>
         <ScrollView style={styles.listContainer}>
           <Image 
-            source={{ uri: 'https://www.starwars.com/databank/millennium-falcon' }}
+            source={{ uri: 'https://lumiere-a.akamaihd.net/v1/images/millennium-falcon-main_c80765bf.jpeg?region=0,0,1280,720' }}
             style={styles.headerImage}
           />
           <View style={styles.searchRow}>
