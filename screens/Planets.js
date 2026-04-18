@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TextInput, Button } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TextInput } from 'react-native';
 import SearchModal from '../components/SearchModal';
 import SwipeableListItem from '../components/SwipeableListItem';
+import AnimatedButton from '../components/AnimatedButton';
 
 const Planets = () => {
   const [planets, setPlanets] = useState([]);
@@ -60,7 +61,12 @@ const Planets = () => {
           onChangeText={setSearchText}
           onSubmitEditing={() => setModalVisible(true)}
         />
-        <Button title="Search" color="#ffd700" onPress={() => setModalVisible(true)} />
+        <AnimatedButton 
+          onPress={() => setModalVisible(true)}
+          style={styles.button}
+        >
+          <Text style={styles.buttonText}>Search</Text>
+        </AnimatedButton>
       </View>
       <ScrollView style={styles.listContainer}>
         {planets.map((planet, index) => (
@@ -98,6 +104,14 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 12,
     marginRight: 10,
+    fontSize: 16,
+  },
+  button: {
+    marginHorizontal: 5,
+  },
+  buttonText: {
+    color: '#000',
+    fontWeight: 'bold',
     fontSize: 16,
   },
 });
