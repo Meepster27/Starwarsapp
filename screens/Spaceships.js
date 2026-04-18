@@ -54,7 +54,7 @@ const Spaceships = () => {
       <View style={styles.container}>
         <ScrollView style={styles.listContainer}>
           <Image 
-            source={{ uri: 'https://images.unsplash.com/photo-1469474937412-56ceb32b89a7?w=400&h=250&fit=crop' }}
+            source={{ uri: 'https://images.unsplash.com/photo-1446776653964-20c1d3a81b06?w=400&h=250&fit=crop' }}
             style={styles.headerImage}
           />
           <View style={styles.searchRow}>
