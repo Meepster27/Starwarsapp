@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TextInput, Button } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TextInput, Button, Image } from 'react-native';
 import SearchModal from '../components/SearchModal';
 import SwipeableListItem from '../components/SwipeableListItem';
 
@@ -52,18 +52,22 @@ const Spaceships = () => {
   return (
     <>
       <View style={styles.container}>
-        <View style={styles.searchRow}>
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Type to search..."
-            placeholderTextColor="#888"
-            value={searchText}
-            onChangeText={setSearchText}
-            onSubmitEditing={() => setModalVisible(true)}
-          />
-          <Button title="Search" color="#ffd700" onPress={() => setModalVisible(true)} />
-        </View>
         <ScrollView style={styles.listContainer}>
+          <Image 
+            source={{ uri: 'https://images.unsplash.com/photo-1446776653964-20c1d3a81b06?w=400&h=250&fit=crop' }}
+            style={styles.headerImage}
+          />
+          <View style={styles.searchRow}>
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Type to search..."
+              placeholderTextColor="#888"
+              value={searchText}
+              onChangeText={setSearchText}
+              onSubmitEditing={() => setModalVisible(true)}
+            />
+            <Button title="Search" color="#ffd700" onPress={() => setModalVisible(true)} />
+          </View>
           {spaceships.map((spaceship, index) => (
             <SwipeableListItem key={index} item={spaceship} itemName="Spaceship" />
           ))}
@@ -85,6 +89,12 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     flex: 1,
+  },
+  headerImage: {
+    width: '100%',
+    height: 250,
+    resizeMode: 'cover',
+    backgroundColor: '#333',
   },
   searchRow: {
     flexDirection: 'row',
