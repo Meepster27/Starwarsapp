@@ -56,6 +56,8 @@ const Spaceships = () => {
           <Image 
             source={{ uri: 'https://upload.wikimedia.org/wikipedia/en/7/7d/Death_star1.png' }}
             style={styles.headerImage}
+            onLoad={() => console.log('Death Star image loaded')}
+            onError={(error) => console.log('Death Star image error:', error)}
           />
           <View style={styles.searchRow}>
             <TextInput
@@ -91,7 +93,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   headerImage: {
-    width: '100%',
+    width: 400,
     height: 250,
     resizeMode: 'cover',
     backgroundColor: '#333',
