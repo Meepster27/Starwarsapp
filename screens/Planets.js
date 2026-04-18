@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, ActivityIndicator, TextInput, Button } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TextInput, Button } from 'react-native';
 import SearchModal from '../components/SearchModal';
+import SwipeableListItem from '../components/SwipeableListItem';
 
 const Planets = () => {
   const [planets, setPlanets] = useState([]);
@@ -45,12 +46,7 @@ const Planets = () => {
   }
 
   const renderPlanetItem = ({ item }) => (
-    <View style={styles.itemContainer}>
-      <Text style={styles.itemTitle}>{item.name}</Text>
-      <Text style={styles.itemDetail}>Climate: {item.climate}</Text>
-      <Text style={styles.itemDetail}>Terrain: {item.terrain}</Text>
-      <Text style={styles.itemDetail}>Population: {item.population}</Text>
-    </View>
+    <SwipeableListItem item={item} itemName="Planet" />
   );
 
   return (
@@ -66,12 +62,11 @@ const Planets = () => {
         />
         <Button title="Search" color="#ffd700" onPress={() => setModalVisible(true)} />
       </View>
-      <FlatList
-        data={planets}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={renderPlanetItem}
-        contentContainerStyle={styles.listContent}
-      />
+      <ScrollView style={styles.listContainer}>
+        {planets.map((planet, index) => (
+          <SwipeableListItem key={index} item={planet} itemName="Planet" />
+        ))}
+      </ScrollView>
       <SearchModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
@@ -86,32 +81,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#1a1a1a',
   },
-  listContent: {
-    padding: 10,
-  },
-  itemContainer: {
-    backgroundColor: '#2a2a2a',
-    borderRadius: 8,
-    padding: 15,
-    marginVertical: 8,
-    borderLeftWidth: 4,
-    borderLeftColor: '#ffd700',
-  },
-  itemTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#ffd700',
-    marginBottom: 8,
-  },
-  itemDetail: {
-    fontSize: 14,
-    color: '#ccc',
-    marginVertical: 2,
-  },
-  errorText: {
-    fontSize: 16,
-    color: '#ff6b6b',
-    textAlign: 'center',
+  listContainer: {
+    flex: 1,
   },
   searchRow: {
     flexDirection: 'row',
