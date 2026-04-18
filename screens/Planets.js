@@ -54,7 +54,7 @@ const Planets = () => {
     <View style={styles.container}>
       <ScrollView style={styles.listContainer}>
         <Image 
-          source={{ uri: 'https://images.unsplash.com/photo-1446776877081-d282a0f896e2?w=400&h=250&fit=crop' }}
+          source={{ uri: 'https://images.unsplash.com/photo-1444080748397-f442aa95c3e5?w=400&h=250&fit=crop' }}
           style={styles.headerImage}
         />
         <View style={styles.searchRow}>
