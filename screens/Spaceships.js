@@ -54,7 +54,7 @@ const Spaceships = () => {
       <View style={styles.container}>
         <ScrollView style={styles.listContainer}>
           <Image 
-            source={{ uri: 'https://upload.wikimedia.org/wikipedia/en/3/3f/millennium_falcon.jpg' }}
+            source={{ uri: 'https://www.pngitem.com/pimgs/m/519-5190906_millennium-falcon-png-transparent-png.png' }}
             style={styles.headerImage}
           />
           <View style={styles.searchRow}>
