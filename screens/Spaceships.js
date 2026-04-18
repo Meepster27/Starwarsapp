@@ -54,10 +54,8 @@ const Spaceships = () => {
       <View style={styles.container}>
         <ScrollView style={styles.listContainer}>
           <Image 
-            source={{ uri: 'https://upload.wikimedia.org/wikipedia/en/7/7d/Death_star1.png' }}
+            source={require('../assets/deathstar.png')}
             style={styles.headerImage}
-            onLoad={() => console.log('Death Star image loaded')}
-            onError={(error) => console.log('Death Star image error:', error)}
           />
           <View style={styles.searchRow}>
             <TextInput
