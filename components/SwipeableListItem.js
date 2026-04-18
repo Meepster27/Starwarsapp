@@ -1,12 +1,51 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Modal, Button } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Modal, Button, Animated } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 
 const SwipeableListItem = ({ item, itemName }) => {
   const [modalVisible, setModalVisible] = useState(false);
+  const scaleAnim = new Animated.Value(0);
+  const opacityAnim = new Animated.Value(0);
+
+  useEffect(() => {
+    if (modalVisible) {
+      Animated.parallel([
+        Animated.spring(scaleAnim, {
+          toValue: 1,
+          friction: 8,
+          tension: 40,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacityAnim, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    } else {
+      scaleAnim.setValue(0);
+      opacityAnim.setValue(0);
+    }
+  }, [modalVisible]);
 
   const handleSwipe = () => {
     setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    Animated.parallel([
+      Animated.spring(scaleAnim, {
+        toValue: 0,
+        friction: 8,
+        tension: 40,
+        useNativeDriver: true,
+      }),
+      Animated.timing(opacityAnim, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+    ]).start(() => setModalVisible(false));
   };
 
   return (
@@ -30,17 +69,31 @@ const SwipeableListItem = ({ item, itemName }) => {
 
       <Modal
         visible={modalVisible}
-        animationType="slide"
+        animationType="none"
         transparent={true}
-        onRequestClose={() => setModalVisible(false)}
+        onRequestClose={closeModal}
       >
-        <View style={styles.overlay}>
-          <View style={styles.modalContent}>
+        <Animated.View 
+          style={[
+            styles.overlay,
+            {
+              opacity: opacityAnim,
+            }
+          ]}
+        >
+          <Animated.View 
+            style={[
+              styles.modalContent,
+              {
+                transform: [{ scale: scaleAnim }],
+              }
+            ]}
+          >
             <Text style={styles.modalTitle}>Item Selected</Text>
             <Text style={styles.modalText}>{item.name || item.title}</Text>
-            <Button title="Close" onPress={() => setModalVisible(false)} />
-          </View>
-        </View>
+            <Button title="Close" onPress={closeModal} />
+          </Animated.View>
+        </Animated.View>
       </Modal>
     </>
   );
