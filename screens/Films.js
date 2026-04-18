@@ -54,7 +54,7 @@ const Films = () => {
       <View style={styles.container}>
         <ScrollView style={styles.listContainer}>
           <Image 
-            source={{ uri: 'https://images.unsplash.com/photo-1485095329183-d0797cdc5676?w=400&h=250&fit=crop' }}
+            source={{ uri: 'https://images.unsplash.com/photo-1533613220915-121e6865b485?w=400&h=250&fit=crop' }}
             style={styles.headerImage}
           />
           <View style={styles.searchRow}>
