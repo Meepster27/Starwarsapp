@@ -26,6 +26,7 @@ const SwipeableListItem = ({ item, itemName }) => {
       scaleAnim.setValue(0);
       opacityAnim.setValue(0);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modalVisible]);
 
   const handleSwipe = () => {
