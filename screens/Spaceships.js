@@ -54,7 +54,7 @@ const Spaceships = () => {
       <View style={styles.container}>
         <ScrollView style={styles.listContainer}>
           <Image 
-            source={{ uri: 'https://lumiere-a.akamaihd.net/v1/images/death-star-og_52711170.jpeg' }}
+            source={{ uri: 'https://www.pngplay.com/wp-content/uploads/13/Death-Star-PNG-Clipart-Background.png' }}
             style={styles.headerImage}
           />
           <View style={styles.searchRow}>
