@@ -5,12 +5,6 @@ import { Swipeable } from 'react-native-gesture-handler';
 const SwipeableListItem = ({ item, itemName }) => {
   const [modalVisible, setModalVisible] = useState(false);
 
-  const renderRightActions = () => (
-    <View style={styles.deleteAction}>
-      <Text style={styles.deleteText}>Delete</Text>
-    </View>
-  );
-
   const handleSwipe = () => {
     setModalVisible(true);
   };
@@ -18,7 +12,6 @@ const SwipeableListItem = ({ item, itemName }) => {
   return (
     <>
       <Swipeable
-        renderRightActions={renderRightActions}
         onSwipeableRightOpen={handleSwipe}
       >
         <View style={styles.itemContainer}>
