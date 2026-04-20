@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TextInput, Button, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TextInput, Image } from 'react-native';
 import SearchModal from '../components/SearchModal';
 import SwipeableListItem from '../components/SwipeableListItem';
-import { checkNetworkStatus, subscribeToNetworkStatus } from '../utils/networkUtils';
+import AnimatedButton from '../components/AnimatedButton';
+import { checkNetworkStatus } from '../utils/networkUtils';
 
 const Spaceships = () => {
   const [spaceships, setSpaceships] = useState([]);
@@ -10,28 +11,24 @@ const Spaceships = () => {
   const [error, setError] = useState(null);
   const [searchText, setSearchText] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
-  const [isConnected, setIsConnected] = useState(true);
+  const [isNetworkAvailable, setIsNetworkAvailable] = useState(true);
 
   useEffect(() => {
-    const initializeNetwork = async () => {
-      const connected = await checkNetworkStatus();
-      setIsConnected(connected);
-    };
-    initializeNetwork();
-    const unsubscribe = subscribeToNetworkStatus(setIsConnected);
     fetchSpaceships();
-    return unsubscribe;
   }, []);
 
   const fetchSpaceships = async () => {
     try {
+      setLoading(true);
       const networkAvailable = await checkNetworkStatus();
+      setIsNetworkAvailable(networkAvailable);
+      
       if (!networkAvailable) {
         setError('No internet connection. Please check your network and try again.');
         setLoading(false);
         return;
       }
-      setLoading(true);
+      
       const response = await fetch('https://swapi.dev/api/starships/');
       const data = await response.json();
       setSpaceships(data.results);
@@ -60,40 +57,44 @@ const Spaceships = () => {
     );
   }
 
-  const renderSpaceshipItem = ({ item }) => (
-    <SwipeableListItem item={item} itemName="Spaceship" />
-  );
-
   return (
-    <>
-      <View style={styles.container}>
-        <ScrollView style={styles.listContainer}>
-          <Image 
-            source={{ uri: 'https://images.unsplash.com/photo-1446776653964-20c1d3a81b06?w=400&h=250&fit=crop' }}
-            style={styles.headerImage}
+    <View style={styles.container}>
+      {!isNetworkAvailable && (
+        <View style={styles.networkWarning}>
+          <Text style={styles.networkWarningText}>⚠️ No internet connection</Text>
+        </View>
+      )}
+      <ScrollView style={styles.listContainer}>
+        <Image 
+          source={{ uri: 'https://images.unsplash.com/photo-1446776653964-20c1d3a81b06?w=400&h=250&fit=crop' }}
+          style={styles.headerImage}
+        />
+        <View style={styles.searchRow}>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Type to search..."
+            placeholderTextColor="#888"
+            value={searchText}
+            onChangeText={setSearchText}
+            onSubmitEditing={() => setModalVisible(true)}
           />
-          <View style={styles.searchRow}>
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Type to search..."
-              placeholderTextColor="#888"
-              value={searchText}
-              onChangeText={setSearchText}
-              onSubmitEditing={() => setModalVisible(true)}
-            />
-            <Button title="Search" color="#ffd700" onPress={() => setModalVisible(true)} />
-          </View>
-          {spaceships.map((spaceship, index) => (
-            <SwipeableListItem key={index} item={spaceship} itemName="Spaceship" />
-          ))}
-        </ScrollView>
-      </View>
+          <AnimatedButton 
+            onPress={() => setModalVisible(true)}
+            style={styles.button}
+          >
+            <Text style={styles.buttonText}>Search</Text>
+          </AnimatedButton>
+        </View>
+        {spaceships.map((spaceship, index) => (
+          <SwipeableListItem key={index} item={spaceship} itemName="Spaceship" />
+        ))}
+      </ScrollView>
       <SearchModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         searchText={searchText}
       />
-    </>
+    </View>
   );
 };
 
@@ -105,8 +106,19 @@ const styles = StyleSheet.create({
   listContainer: {
     flex: 1,
   },
+  networkWarning: {
+    backgroundColor: '#ff6b6b',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+  },
+  networkWarningText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 14,
+    textAlign: 'center',
+  },
   headerImage: {
-    width: 400,
+    width: '100%',
     height: 250,
     resizeMode: 'cover',
     backgroundColor: '#333',
@@ -126,6 +138,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     marginRight: 10,
     fontSize: 16,
+  },
+  button: {
+    marginHorizontal: 5,
+  },
+  buttonText: {
+    color: '#000',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  errorText: {
+    color: '#ff6b6b',
+    fontSize: 16,
+    textAlign: 'center',
+    marginTop: 20,
   },
 });
 

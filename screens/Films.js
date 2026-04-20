@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TextInput, Button, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TextInput, Image } from 'react-native';
 import SearchModal from '../components/SearchModal';
 import SwipeableListItem from '../components/SwipeableListItem';
-import { checkNetworkStatus, subscribeToNetworkStatus } from '../utils/networkUtils';
+import AnimatedButton from '../components/AnimatedButton';
+import { checkNetworkStatus } from '../utils/networkUtils';
 
 const Films = () => {
   const [films, setFilms] = useState([]);
@@ -10,28 +11,24 @@ const Films = () => {
   const [error, setError] = useState(null);
   const [searchText, setSearchText] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
-  const [isConnected, setIsConnected] = useState(true);
+  const [isNetworkAvailable, setIsNetworkAvailable] = useState(true);
 
   useEffect(() => {
-    const initializeNetwork = async () => {
-      const connected = await checkNetworkStatus();
-      setIsConnected(connected);
-    };
-    initializeNetwork();
-    const unsubscribe = subscribeToNetworkStatus(setIsConnected);
     fetchFilms();
-    return unsubscribe;
   }, []);
 
   const fetchFilms = async () => {
     try {
+      setLoading(true);
       const networkAvailable = await checkNetworkStatus();
+      setIsNetworkAvailable(networkAvailable);
+      
       if (!networkAvailable) {
         setError('No internet connection. Please check your network and try again.');
         setLoading(false);
         return;
       }
-      setLoading(true);
+      
       const response = await fetch('https://swapi.dev/api/films/');
       const data = await response.json();
       setFilms(data.results);
@@ -60,40 +57,44 @@ const Films = () => {
     );
   }
 
-  const renderFilmItem = ({ item }) => (
-    <SwipeableListItem item={item} itemName="Film" />
-  );
-
   return (
-    <>
-      <View style={styles.container}>
-        <ScrollView style={styles.listContainer}>
-          <Image 
-            source={{ uri: 'https://images.unsplash.com/photo-1505686994434-e3cc5abf1330?w=400&h=250&fit=crop' }}
-            style={styles.headerImage}
+    <View style={styles.container}>
+      {!isNetworkAvailable && (
+        <View style={styles.networkWarning}>
+          <Text style={styles.networkWarningText}>⚠️ No internet connection</Text>
+        </View>
+      )}
+      <ScrollView style={styles.listContainer}>
+        <Image 
+          source={{ uri: 'https://images.unsplash.com/photo-1505686994434-e3cc5abf1330?w=400&h=250&fit=crop' }}
+          style={styles.headerImage}
+        />
+        <View style={styles.searchRow}>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Type to search..."
+            placeholderTextColor="#888"
+            value={searchText}
+            onChangeText={setSearchText}
+            onSubmitEditing={() => setModalVisible(true)}
           />
-          <View style={styles.searchRow}>
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Type to search..."
-              placeholderTextColor="#888"
-              value={searchText}
-              onChangeText={setSearchText}
-              onSubmitEditing={() => setModalVisible(true)}
-            />
-            <Button title="Search" color="#ffd700" onPress={() => setModalVisible(true)} />
-          </View>
-          {films.map((film, index) => (
-            <SwipeableListItem key={index} item={film} itemName="Film" />
-          ))}
-        </ScrollView>
-      </View>
+          <AnimatedButton 
+            onPress={() => setModalVisible(true)}
+            style={styles.button}
+          >
+            <Text style={styles.buttonText}>Search</Text>
+          </AnimatedButton>
+        </View>
+        {films.map((film, index) => (
+          <SwipeableListItem key={index} item={film} itemName="Film" />
+        ))}
+      </ScrollView>
       <SearchModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         searchText={searchText}
       />
-    </>
+    </View>
   );
 };
 
@@ -104,6 +105,17 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     flex: 1,
+  },
+  networkWarning: {
+    backgroundColor: '#ff6b6b',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+  },
+  networkWarningText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 14,
+    textAlign: 'center',
   },
   headerImage: {
     width: '100%',
@@ -126,6 +138,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     marginRight: 10,
     fontSize: 16,
+  },
+  button: {
+    marginHorizontal: 5,
+  },
+  buttonText: {
+    color: '#000',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  errorText: {
+    color: '#ff6b6b',
+    fontSize: 16,
+    textAlign: 'center',
+    marginTop: 20,
   },
 });
 

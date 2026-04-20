@@ -1,50 +1,62 @@
 import React, { useRef } from 'react';
-import { Pressable, StyleSheet } from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-  Easing,
-} from 'react-native-reanimated';
+import { Pressable, StyleSheet, Animated } from 'react-native';
 
 const AnimatedButton = ({ onPress, children, style }) => {
-  const borderRadiusValue = useSharedValue(8);
-  const opacityValue = useSharedValue(1);
-  const scaleValue = useSharedValue(1);
-  const backgroundColorValue = useSharedValue(0); // 0 = normal, 1 = red
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const opacityAnim = useRef(new Animated.Value(1)).current;
+  const borderRadiusAnim = useRef(new Animated.Value(8)).current;
 
   const handlePressIn = () => {
-    borderRadiusValue.value = withSpring(25);
-    opacityValue.value = withSpring(0.7);
-    scaleValue.value = withSpring(0.95);
-  };
-
-  const handleLongPress = () => {
-    backgroundColorValue.value = withSpring(1);
-    scaleValue.value = withSpring(0.85);
+    Animated.parallel([
+      Animated.spring(scaleAnim, {
+        toValue: 0.95,
+        friction: 8,
+        tension: 40,
+        useNativeDriver: true,
+      }),
+      Animated.timing(opacityAnim, {
+        toValue: 0.7,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(borderRadiusAnim, {
+        toValue: 25,
+        duration: 100,
+        useNativeDriver: false,
+      }),
+    ]).start();
   };
 
   const handlePressOut = () => {
-    borderRadiusValue.value = withSpring(8);
-    opacityValue.value = withSpring(1);
-    scaleValue.value = withSpring(1);
-    backgroundColorValue.value = withSpring(0);
+    Animated.parallel([
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        friction: 8,
+        tension: 40,
+        useNativeDriver: true,
+      }),
+      Animated.timing(opacityAnim, {
+        toValue: 1,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(borderRadiusAnim, {
+        toValue: 8,
+        duration: 100,
+        useNativeDriver: false,
+      }),
+    ]).start();
   };
 
-  const animatedStyle = useAnimatedStyle(() => {
-    const backgroundColor = backgroundColorValue.value === 1 ? '#ff6b6b' : '#ffd700';
-    return {
-      borderRadius: borderRadiusValue.value,
-      opacity: opacityValue.value,
-      transform: [{ scale: scaleValue.value }],
-      backgroundColor,
-    };
-  });
+  const animatedStyle = {
+    transform: [{ scale: scaleAnim }],
+    opacity: opacityAnim,
+    borderRadius: borderRadiusAnim,
+  };
 
   return (
     <Pressable
       onPressIn={handlePressIn}
-      onLongPress={handleLongPress}
       onPressOut={handlePressOut}
       onPress={onPress}
     >
@@ -62,6 +74,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#ffd700',
   },
 });
 

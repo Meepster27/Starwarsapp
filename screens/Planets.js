@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TextInput, Image
 import SearchModal from '../components/SearchModal';
 import SwipeableListItem from '../components/SwipeableListItem';
 import AnimatedButton from '../components/AnimatedButton';
-import { checkNetworkStatus, subscribeToNetworkStatus } from '../utils/networkUtils';
+import { checkNetworkStatus } from '../utils/networkUtils';
 
 const Planets = () => {
   const [planets, setPlanets] = useState([]);
@@ -11,28 +11,24 @@ const Planets = () => {
   const [error, setError] = useState(null);
   const [searchText, setSearchText] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
-  const [isConnected, setIsConnected] = useState(true);
+  const [isNetworkAvailable, setIsNetworkAvailable] = useState(true);
 
   useEffect(() => {
-    const initializeNetwork = async () => {
-      const connected = await checkNetworkStatus();
-      setIsConnected(connected);
-    };
-    initializeNetwork();
-    const unsubscribe = subscribeToNetworkStatus(setIsConnected);
     fetchPlanets();
-    return unsubscribe;
   }, []);
 
   const fetchPlanets = async () => {
     try {
+      setLoading(true);
       const networkAvailable = await checkNetworkStatus();
+      setIsNetworkAvailable(networkAvailable);
+      
       if (!networkAvailable) {
         setError('No internet connection. Please check your network and try again.');
         setLoading(false);
         return;
       }
-      setLoading(true);
+      
       const response = await fetch('https://swapi.dev/api/planets/');
       const data = await response.json();
       setPlanets(data.results);
@@ -61,12 +57,13 @@ const Planets = () => {
     );
   }
 
-  const renderPlanetItem = ({ item }) => (
-    <SwipeableListItem item={item} itemName="Planet" />
-  );
-
   return (
     <View style={styles.container}>
+      {!isNetworkAvailable && (
+        <View style={styles.networkWarning}>
+          <Text style={styles.networkWarningText}>⚠️ No internet connection</Text>
+        </View>
+      )}
       <ScrollView style={styles.listContainer}>
         <Image 
           source={{ uri: 'https://images.unsplash.com/photo-1446776877081-d282a0f896e2?w=400&h=250&fit=crop' }}
@@ -109,6 +106,17 @@ const styles = StyleSheet.create({
   listContainer: {
     flex: 1,
   },
+  networkWarning: {
+    backgroundColor: '#ff6b6b',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+  },
+  networkWarningText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 14,
+    textAlign: 'center',
+  },
   headerImage: {
     width: '100%',
     height: 250,
@@ -138,6 +146,12 @@ const styles = StyleSheet.create({
     color: '#000',
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  errorText: {
+    color: '#ff6b6b',
+    fontSize: 16,
+    textAlign: 'center',
+    marginTop: 20,
   },
 });
 
