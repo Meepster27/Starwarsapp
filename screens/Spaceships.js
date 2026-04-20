@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TextInput, Image
 import SearchModal from '../components/SearchModal';
 import SwipeableListItem from '../components/SwipeableListItem';
 import AnimatedButton from '../components/AnimatedButton';
-import { checkNetworkStatus } from '../utils/networkUtils';
 
 const Spaceships = () => {
   const [spaceships, setSpaceships] = useState([]);
@@ -20,22 +19,22 @@ const Spaceships = () => {
   const fetchSpaceships = async () => {
     try {
       setLoading(true);
-      const networkAvailable = await checkNetworkStatus();
-      setIsNetworkAvailable(networkAvailable);
       
-      if (!networkAvailable) {
-        setError('No internet connection. Please check your network and try again.');
-        setLoading(false);
-        return;
+      // Try to fetch spaceships data
+      const response = await fetch('https://swapi.dev/api/starships/');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      const response = await fetch('https://swapi.dev/api/starships/');
       const data = await response.json();
-      setSpaceships(data.results);
+      setSpaceships(data.results || []);
       setError(null);
+      setIsNetworkAvailable(true);
     } catch (err) {
+      console.error('Error fetching spaceships:', err);
       setError('Failed to fetch spaceships. Please check your internet connection.');
-      console.error(err);
+      setIsNetworkAvailable(false);
+      setSpaceships([]);
     } finally {
       setLoading(false);
     }
