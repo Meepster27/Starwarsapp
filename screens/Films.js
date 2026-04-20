@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TextInput, Button, Image } from 'react-native';
 import SearchModal from '../components/SearchModal';
 import SwipeableListItem from '../components/SwipeableListItem';
+import { checkNetworkStatus, subscribeToNetworkStatus } from '../utils/networkUtils';
 
 const Films = () => {
   const [films, setFilms] = useState([]);
@@ -9,20 +10,30 @@ const Films = () => {
   const [error, setError] = useState(null);
   const [searchText, setSearchText] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
+  const [isConnected, setIsConnected] = useState(true);
 
   useEffect(() => {
+    checkNetworkStatus();
+    const unsubscribe = subscribeToNetworkStatus(setIsConnected);
     fetchFilms();
+    return unsubscribe;
   }, []);
 
   const fetchFilms = async () => {
     try {
+      const networkAvailable = await checkNetworkStatus();
+      if (!networkAvailable) {
+        setError('No internet connection. Please check your network and try again.');
+        setLoading(false);
+        return;
+      }
       setLoading(true);
       const response = await fetch('https://swapi.dev/api/films/');
       const data = await response.json();
       setFilms(data.results);
       setError(null);
     } catch (err) {
-      setError('Failed to fetch films');
+      setError('Failed to fetch films. Please check your internet connection.');
       console.error(err);
     } finally {
       setLoading(false);

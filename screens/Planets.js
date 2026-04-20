@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TextInput, Image
 import SearchModal from '../components/SearchModal';
 import SwipeableListItem from '../components/SwipeableListItem';
 import AnimatedButton from '../components/AnimatedButton';
+import { checkNetworkStatus, subscribeToNetworkStatus } from '../utils/networkUtils';
 
 const Planets = () => {
   const [planets, setPlanets] = useState([]);
@@ -10,20 +11,30 @@ const Planets = () => {
   const [error, setError] = useState(null);
   const [searchText, setSearchText] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
+  const [isConnected, setIsConnected] = useState(true);
 
   useEffect(() => {
+    checkNetworkStatus();
+    const unsubscribe = subscribeToNetworkStatus(setIsConnected);
     fetchPlanets();
+    return unsubscribe;
   }, []);
 
   const fetchPlanets = async () => {
     try {
+      const networkAvailable = await checkNetworkStatus();
+      if (!networkAvailable) {
+        setError('No internet connection. Please check your network and try again.');
+        setLoading(false);
+        return;
+      }
       setLoading(true);
       const response = await fetch('https://swapi.dev/api/planets/');
       const data = await response.json();
       setPlanets(data.results);
       setError(null);
     } catch (err) {
-      setError('Failed to fetch planets');
+      setError('Failed to fetch planets. Please check your internet connection.');
       console.error(err);
     } finally {
       setLoading(false);

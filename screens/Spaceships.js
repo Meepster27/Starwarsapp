@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TextInput, Button, Image } from 'react-native';
 import SearchModal from '../components/SearchModal';
 import SwipeableListItem from '../components/SwipeableListItem';
+import { checkNetworkStatus, subscribeToNetworkStatus } from '../utils/networkUtils';
 
 const Spaceships = () => {
   const [spaceships, setSpaceships] = useState([]);
@@ -9,20 +10,30 @@ const Spaceships = () => {
   const [error, setError] = useState(null);
   const [searchText, setSearchText] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
+  const [isConnected, setIsConnected] = useState(true);
 
   useEffect(() => {
+    checkNetworkStatus();
+    const unsubscribe = subscribeToNetworkStatus(setIsConnected);
     fetchSpaceships();
+    return unsubscribe;
   }, []);
 
   const fetchSpaceships = async () => {
     try {
+      const networkAvailable = await checkNetworkStatus();
+      if (!networkAvailable) {
+        setError('No internet connection. Please check your network and try again.');
+        setLoading(false);
+        return;
+      }
       setLoading(true);
       const response = await fetch('https://swapi.dev/api/starships/');
       const data = await response.json();
       setSpaceships(data.results);
       setError(null);
     } catch (err) {
-      setError('Failed to fetch spaceships');
+      setError('Failed to fetch spaceships. Please check your internet connection.');
       console.error(err);
     } finally {
       setLoading(false);
