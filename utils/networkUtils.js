@@ -1,30 +1,27 @@
-import * as Network from 'expo-network';
-
+// Simple network detection utility
 export const checkNetworkStatus = async () => {
   try {
-    const ipAddress = await Network.getIpAddressAsync();
-    console.log('IP Address:', ipAddress);
-    // If we can get an IP, we assume we have network connectivity
-    return ipAddress !== '0.0.0.0' && ipAddress !== null && ipAddress !== '';
+    // Try to fetch a simple resource to check connectivity
+    const response = await fetch('https://www.google.com', { method: 'HEAD' });
+    return response.ok || response.status === 200;
   } catch (error) {
-    console.error('Error checking network status:', error);
-    // If there's an error, assume we're offline
+    console.error('Network check failed:', error);
     return false;
   }
 };
 
 export const subscribeToNetworkStatus = (callback) => {
-  // For expo-network, we'll do periodic checks since it doesn't have a real-time listener
+  // For web/Expo, we'll do periodic checks
   const checkInterval = setInterval(async () => {
     try {
-      const ipAddress = await Network.getIpAddressAsync();
-      const isConnected = ipAddress !== '0.0.0.0' && ipAddress !== null && ipAddress !== '';
+      const response = await fetch('https://www.google.com', { method: 'HEAD' });
+      const isConnected = response.ok || response.status === 200;
       callback(isConnected);
     } catch (error) {
-      console.error('Error checking network status:', error);
+      console.error('Network check failed:', error);
       callback(false);
     }
-  }, 5000); // Check every 5 seconds
+  }, 5000);
 
   return () => clearInterval(checkInterval);
 };
