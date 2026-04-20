@@ -3,13 +3,16 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Platform } from 'react-native';
+import { Platform, LogBox } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Planets from './screens/Planets';
 import Spaceships from './screens/Spaceships';
 import Films from './screens/Films';
+
+// Ignore the PlatformConstants warning
+LogBox.ignoreLogs(['TurboModuleRegistry.getEnforcing(...): \'PlatformConstants\'']);
 
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
