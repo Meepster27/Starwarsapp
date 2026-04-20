@@ -1,9 +1,9 @@
-import NetInfo from '@react-native-community/netinfo';
+import * as Network from 'expo-network';
 
 export const checkNetworkStatus = async () => {
   try {
-    const state = await NetInfo.fetch();
-    return state.isConnected && state.isInternetReachable;
+    const ipAddress = await Network.getIpAddressAsync();
+    return ipAddress !== '0.0.0.0' && ipAddress !== null;
   } catch (error) {
     console.error('Error checking network status:', error);
     return false;
@@ -11,9 +11,17 @@ export const checkNetworkStatus = async () => {
 };
 
 export const subscribeToNetworkStatus = (callback) => {
-  const unsubscribe = NetInfo.addEventListener(state => {
-    const isConnected = state.isConnected && state.isInternetReachable;
-    callback(isConnected);
-  });
-  return unsubscribe;
+  // For expo-network, we'll do periodic checks since it doesn't have a real-time listener
+  const checkInterval = setInterval(async () => {
+    try {
+      const ipAddress = await Network.getIpAddressAsync();
+      const isConnected = ipAddress !== '0.0.0.0' && ipAddress !== null;
+      callback(isConnected);
+    } catch (error) {
+      console.error('Error checking network status:', error);
+      callback(false);
+    }
+  }, 5000); // Check every 5 seconds
+
+  return () => clearInterval(checkInterval);
 };
