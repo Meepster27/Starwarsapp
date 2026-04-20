@@ -14,7 +14,11 @@ const Planets = () => {
   const [isConnected, setIsConnected] = useState(true);
 
   useEffect(() => {
-    checkNetworkStatus();
+    const initializeNetwork = async () => {
+      const connected = await checkNetworkStatus();
+      setIsConnected(connected);
+    };
+    initializeNetwork();
     const unsubscribe = subscribeToNetworkStatus(setIsConnected);
     fetchPlanets();
     return unsubscribe;
