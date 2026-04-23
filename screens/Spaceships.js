@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TextInput, Button } from 'react-native';
+import { View, Text, StyleSheet, FlatList, ActivityIndicator, TextInput, Button } from 'react-native';
 import SearchModal from '../components/SearchModal';
-import SwipeableListItem from '../components/SwipeableListItem';
 
 const Spaceships = () => {
   const [spaceships, setSpaceships] = useState([]);
@@ -46,7 +45,12 @@ const Spaceships = () => {
   }
 
   const renderSpaceshipItem = ({ item }) => (
-    <SwipeableListItem item={item} itemName="Spaceship" />
+    <View style={styles.itemContainer}>
+      <Text style={styles.itemTitle}>{item.name}</Text>
+      <Text style={styles.itemDetail}>Model: {item.model}</Text>
+      <Text style={styles.itemDetail}>Manufacturer: {item.manufacturer}</Text>
+      <Text style={styles.itemDetail}>Class: {item.starship_class}</Text>
+    </View>
   );
 
   return (
@@ -59,15 +63,15 @@ const Spaceships = () => {
             placeholderTextColor="#888"
             value={searchText}
             onChangeText={setSearchText}
-            onSubmitEditing={() => setModalVisible(true)}
           />
           <Button title="Search" color="#ffd700" onPress={() => setModalVisible(true)} />
         </View>
-        <ScrollView style={styles.listContainer}>
-          {spaceships.map((spaceship, index) => (
-            <SwipeableListItem key={index} item={spaceship} itemName="Spaceship" />
-          ))}
-        </ScrollView>
+        <FlatList
+          data={spaceships}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={renderSpaceshipItem}
+          contentContainerStyle={styles.listContent}
+        />
       </View>
       <SearchModal
         visible={modalVisible}
@@ -83,8 +87,32 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#1a1a1a',
   },
-  listContainer: {
-    flex: 1,
+  listContent: {
+    padding: 10,
+  },
+  itemContainer: {
+    backgroundColor: '#2a2a2a',
+    borderRadius: 8,
+    padding: 15,
+    marginVertical: 8,
+    borderLeftWidth: 4,
+    borderLeftColor: '#ffd700',
+  },
+  itemTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#ffd700',
+    marginBottom: 8,
+  },
+  itemDetail: {
+    fontSize: 14,
+    color: '#ccc',
+    marginVertical: 2,
+  },
+  errorText: {
+    fontSize: 16,
+    color: '#ff6b6b',
+    textAlign: 'center',
   },
   searchRow: {
     flexDirection: 'row',
